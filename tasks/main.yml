@@ -1,0 +1,22 @@
+---
+
+- name: Install packages
+  become: true
+  yum:
+    name: libselinux-python,httpd
+    state: latest
+
+- selinux:
+    state: disabled
+  become: true
+
+- name: Install configuration file http
+  template:
+    src: index.html.j2
+    dest: "/var/www/html/index.html"
+    owner: root
+    group: root
+    mode: '0644'
+    setype: httpd_cfg_t
+  notify: restart httpd
+  become: true
