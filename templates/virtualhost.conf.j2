@@ -1,0 +1,7 @@
+<VirtualHost {{ ansible_eth1.ipv4.address }}:443>
+    DocumentRoot /var/www/html
+    ServerName {{ ansible_hostname }}
+        SSLEngine on
+        SSLCertificateFile /etc/ssl/xip.io.crt
+        SSLCertificateKeyFile /etc/ssl/xip.io.key
+    </VirtualHost>

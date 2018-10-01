@@ -3,14 +3,14 @@
 - name: Install packages
   become: true
   yum:
-    name: libselinux-python,httpd
+    name: libselinux-python,httpd,mod_ssl
     state: latest
 
 - selinux:
     state: disabled
   become: true
 
-- name: Install configuration file http
+- name: Apply Configuration File Http
   template:
     src: index.html.j2
     dest: "/var/www/html/index.html"
@@ -19,4 +19,33 @@
     mode: '0644'
     setype: httpd_cfg_t
   notify: restart httpd
+  become: true
+
+- name: Apply Configuration File Virtualhost Httpd
+  template:
+    src: virtualhost.conf.j2
+    dest: "/etc/httpd/conf.d/virtualhost.conf"
+    owner: root
+    group: root
+    mode: '0644'
+    setype: httpd_cfg_t
+  notify: restart httpd
+  become: true
+
+- name: Copy Crt File Certificate
+  copy:
+    src: "{{ cert_crt }}"
+    dest: "{{ path_certs }}/{{ cert_crt }}"
+    owner: root
+    group: root
+    mode: 0600
+  become: true
+
+- name: Copy Key File Certificate
+  copy:
+    src: "{{ cert_key }}"
+    dest: "{{ path_certs }}/{{ cert_key }}"
+    owner: root
+    group: root
+    mode: 0600
   become: true
